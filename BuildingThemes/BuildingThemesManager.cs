@@ -58,9 +58,21 @@ namespace BuildingThemes
 
                         Debugger.xmlCorrupt = false;
                     }
-                    catch
+                    catch (Exception ex)
                     {
                         Debugger.xmlCorrupt = true;
+                        
+                        // Log the specific error for debugging
+                        if (Debugger.Enabled)
+                        {
+                            Debugger.LogFormat("Building Themes: Failed to load configuration from {0}. Error: {1}", 
+                                userConfigPath, ex.Message);
+                            Debugger.LogException(ex);
+                        }
+                        
+                        // Create a default configuration as fallback
+                        _configuration = new Configuration();
+                        SaveConfig();
                     }
                 }
 
@@ -70,7 +82,27 @@ namespace BuildingThemes
 
         internal void SaveConfig()
         {
-            if (_configuration != null) Configuration.Serialize(userConfigPath, _configuration);
+            try
+            {
+                if (_configuration != null) 
+                {
+                    Configuration.Serialize(userConfigPath, _configuration);
+                    
+                    if (Debugger.Enabled)
+                    {
+                        Debugger.Log("Building Themes: Configuration saved successfully.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (Debugger.Enabled)
+                {
+                    Debugger.LogFormat("Building Themes: Failed to save configuration to {0}. Error: {1}", 
+                        userConfigPath, ex.Message);
+                }
+                Debugger.LogException(ex);
+            }
         }
 
         public void Reset()
@@ -140,7 +172,11 @@ namespace BuildingThemes
                 }
                 catch (Exception e)
                 {
-                    Debugger.Log("Error while importing style " + style.FullName);
+                    if (Debugger.Enabled)
+                    {
+                        Debugger.LogFormat("Building Themes: Error while importing style {0}. Error: {1}", 
+                            style.FullName, e.Message);
+                    }
                     Debugger.LogException(e);
                 }
             }

@@ -319,7 +319,7 @@ namespace BuildingThemes.GUI
                 errorMessage.Append("Not all buildings are loaded.\n");
             errorMessage.Length--;
 
-            return errorMessage.ToString(); ;
+            return errorMessage.ToString();
         }
 
         public override void Update()

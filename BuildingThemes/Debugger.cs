@@ -164,8 +164,13 @@ namespace BuildingThemes
 
                 Debug.Log(message);
             }
-            catch
+            catch (Exception ex)
             {
+                if (Enabled)
+                {
+                    LogError("Building Themes: Failed to append theme list. Error: " + ex.Message);
+                }
+                LogException(ex);
             }
         }
     }
